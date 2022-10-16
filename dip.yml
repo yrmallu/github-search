@@ -1,0 +1,46 @@
+version: '6.1'
+
+compose:
+  files:
+    - docker-compose.yml
+
+interaction:
+  irb:
+    description: Run console with full environment within a container
+    service: app
+    command: bundle exec rails c
+
+  bash:
+    description: Run an arbitrary script within a container (or open a shell without deps)
+    service: app
+    command: /bin/bash
+    compose_run_options: [no-deps]
+
+  bundle:
+    description: Run Bundler commands
+    service: app
+    command: bundle
+    compose_run_options: [no-deps]
+
+  server:
+    description: Run server (localhost:3000)
+    service: app
+    command: rerun --ignore 'bundles/*' 'bundle exec rails s -b 0.0.0.0'
+    compose:
+      run_options: [service-ports, use-aliases]
+
+  rspec:
+    description: Run tests
+    service: app
+    command: bundle exec rspec
+
+  rubocop:
+    description: Run Rubocop
+    service: app
+    command: bundle exec rubocop
+    compose_run_options: [no-deps]
+
+provision:
+  - dip compose down --volumes --remove-orphans
+  - dip compose build --no-cache
+  - dip bundle install

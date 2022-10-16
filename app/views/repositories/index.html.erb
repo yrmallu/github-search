@@ -1,0 +1,39 @@
+<h1>Repositories</h1>
+<p style="color: red"><%= notice %></p>
+<%= form_with(url: root_path, method: :get) do |form| %>
+  <div class="input-group mb-3">
+    <input type="text" name="query" class="form-control form-control-lg" placeholder="Search Here">
+    <button type="submit" class="input-group-text btn-success"><i class="bi bi-search me-2"></i> Search</button>
+  </div>
+<% end %>
+
+<div class="bd-example">
+  <table class="table table-striped table-hover">
+    <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Repo Link</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% if  @repositories && @repositories[:data] %>
+      <% @repositories[:data].each do |repo| %>
+        <tr>
+          <th scope="row"><%=  repo.dig(:attributes, :name) %></th>
+          <td><%= link_to repo.dig(:attributes, :full_name), repo.dig(:attributes, :html_url) %></td>
+        </tr>
+      <% end %>
+    <% else %>
+      <tr>
+        <td colspan="2">No data</td>
+      </tr>
+    <% end %>
+    </tbody>
+
+  </table>
+</div>
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center">
+    <%= will_paginate @pages %>
+  </ul>
+</nav>

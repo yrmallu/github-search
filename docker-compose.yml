@@ -1,0 +1,34 @@
+version: '3.8'
+
+x-app: &app
+  build:
+    context: .
+    args:
+      RUBY_VERSION: '3.1.2'
+  environment: &env
+    RACK_ENV: development
+    EDITOR: vi
+    LOG: ${LOG:-0}
+  image: github-search-dev:1.0.0
+  tmpfs:
+    - /tmp
+
+x-backend: &backend
+  <<: *app
+  stdin_open: true
+  tty: true
+  environment: &backend_environment
+    <<: *env
+  volumes:
+    - .:/app:cached
+    - bundle:/usr/local/bundle:delegated
+
+services:
+  app:
+    <<: *backend
+    command: bundle exec rails s -b 0.0.0.0
+    ports:
+      - '3000:3000'
+
+volumes:
+  bundle:
